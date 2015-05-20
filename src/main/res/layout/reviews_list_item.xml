@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reviews_list_item_title_tv"
+        android:text="超能查派是部好电影"
+        android:textSize="20dp"
+
+        android:layout_alignParentTop="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:id="@+id/reviews_list_item_author_tv"
+        android:text="baibig"
+        android:layout_below="@id/reviews_list_item_title_tv"
+        android:layout_marginLeft="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:id="@+id/reviews_list_item_time_tv"
+        android:layout_below="@id/reviews_list_item_title_tv"
+        android:layout_toRightOf="@id/reviews_list_item_author_tv"
+        android:layout_marginLeft="10dp"
+        android:text="2015年5月17"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/reviews_list_item_author_tv"
+        android:id="@+id/reviews_list_item_description_tv"
+        android:layout_marginLeft="5dp"
+        android:text="是；地方说的疯狂拉升的斯蒂芬金  是死了都放假了说是非颠倒圣鲁道夫"/>
+
+
+
+</RelativeLayout>
