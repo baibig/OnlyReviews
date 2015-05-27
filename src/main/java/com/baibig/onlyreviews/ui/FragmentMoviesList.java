@@ -26,6 +26,7 @@ public class FragmentMoviesList extends Fragment{
         mViewPager= (ViewPager) mView.findViewById(R.id.home_viewpagers);
         mHomePagerAdapter=new HomePagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mHomePagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
         mPagerSlidingTabStrip= (PagerSlidingTabStrip) mView.findViewById(R.id.home_tabs);
         mPagerSlidingTabStrip.setViewPager(mViewPager);
         return mView;

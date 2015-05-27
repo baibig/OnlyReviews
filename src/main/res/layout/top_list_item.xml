@@ -6,7 +6,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/top_list_item_img"
-        android:maxHeight="300dp"
+        android:maxHeight="100dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:src="@drawable/movie_img_default"

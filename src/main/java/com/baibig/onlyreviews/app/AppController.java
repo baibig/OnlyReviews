@@ -1,11 +1,15 @@
 package com.baibig.onlyreviews.app;
 
 import android.app.Application;
+import android.support.v4.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.baibig.onlyreviews.ui.FragmentComing;
+import com.baibig.onlyreviews.ui.FragmentPlaying;
+import com.baibig.onlyreviews.ui.FragmentTop;
 import com.baibig.onlyreviews.utils.LruBitmapCache;
 
 /**
@@ -16,6 +20,9 @@ public class AppController extends Application {
 
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
+    private FragmentTop mFragmentTop;
+    private FragmentPlaying mFragmentPlaying;
+    private FragmentComing mFragmtComing;
 
     private static AppController mInstance;
 
@@ -35,6 +42,28 @@ public class AppController extends Application {
 
         }
         return mRequestQueue;
+    }
+
+    public Fragment getFragment(String s){
+        switch (s){
+            case "top":
+                if (mFragmentTop==null){
+                    mFragmentTop=new FragmentTop();
+                }
+                return this.mFragmentTop;
+            case "playing":
+                if (mFragmentPlaying==null){
+                    mFragmentPlaying=new FragmentPlaying();
+
+                }
+                return this.mFragmentPlaying;
+            case "coming":
+                if (mFragmtComing==null){
+                    mFragmtComing=new FragmentComing();
+                }
+                return this.mFragmtComing;
+        }
+        return null;
     }
 
     public ImageLoader getImageLoader(){
