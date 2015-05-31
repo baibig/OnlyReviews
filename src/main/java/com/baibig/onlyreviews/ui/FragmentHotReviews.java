@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
@@ -21,6 +22,7 @@ import com.baibig.onlyreviews.data.Constant;
 import com.baibig.onlyreviews.data.ReviewsRSSHandler;
 import com.baibig.onlyreviews.model.ReviewsRSSFeed;
 import com.baibig.onlyreviews.model.ReviewsRSSItem;
+import com.baibig.onlyreviews.utils.MovieParser;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -30,6 +32,7 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Handler;
 
@@ -40,64 +43,50 @@ import javax.xml.parsers.SAXParserFactory;
 /**
  * Created by HJ on 2015/5/11.
  */
-public class FragmentHotReviews extends Fragment {
+public class FragmentHotReviews extends Fragment implements MovieParser.ListResultCallBack,
+        AdapterView.OnItemClickListener{
     private View mView;
     private ListView mListView;
     private ReviewsListAdapter adapter;
-    private static ReviewsRSSFeed feed;
+    private List<ReviewsRSSItem> list=new ArrayList<>();
+    private String url=Constant.HOTREVIEWS;
+    private OnReviewListener onReviewListener;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        Bundle bundle=getArguments();
+        if (bundle!=null){
+            url=bundle.getString("request_url");
+        }
         mView=inflater.inflate(R.layout.fragment_hotreviews,null);
-
         mListView= (ListView) mView.findViewById(R.id.hotReviewsLV);
-
-
-        /**
-         * 利用Volley发送http请求获取评论返回xml数据
-         */
-        RequestQueue queue= Volley.newRequestQueue(getActivity());
-        StringRequest request=new StringRequest(
-                Constant.HOTREVIEWS,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-                        feed=new ReviewsRSSFeed();
-                        feed=reviewsXmlReslove(s);
-                        List<ReviewsRSSItem> list=new ArrayList<>();
-                        list.addAll(feed.getAllItems());
-                        adapter=new ReviewsListAdapter(getActivity(),R.layout.reviews_list_item,list);
-                        mListView.setAdapter(adapter);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.i("tag",volleyError.getMessage());
-                    }
-                }
-        );
-        queue.add(request);
-        Log.i("tag","fragmenthotreviews");
+        adapter=new ReviewsListAdapter(getActivity(),R.layout.reviews_list_item,list);
+        mListView.setAdapter(adapter);
+        mListView.setOnItemClickListener(this);
+        MovieParser.getReviewsFromXml(url,this);
         return mView;
     }
+    @Override
+    public void onListResult(List<?> data) {
+        list.clear();
+        list.addAll((Collection<? extends ReviewsRSSItem>) data);
+        adapter.notifyDataSetChanged();
+    }
 
-    private ReviewsRSSFeed reviewsXmlReslove(String s) {
-        SAXParserFactory factory=SAXParserFactory.newInstance();
-        try {
-            SAXParser parser=factory.newSAXParser();
-            XMLReader xmlReader=parser.getXMLReader();
-            ReviewsRSSHandler handler=new ReviewsRSSHandler();
-            xmlReader.setContentHandler(handler);
-            InputSource is=new InputSource(new StringReader(s));
-            xmlReader.parse(is);
-            return handler.getFeed();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        onReviewListener= (OnReviewListener) activity;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Log.i("reviewclick","clicked");
+        ReviewsRSSItem item= (ReviewsRSSItem) adapterView.getItemAtPosition(i);
+        onReviewListener.onReview(item);
+
+    }
+    public interface OnReviewListener{
+        void onReview(ReviewsRSSItem item);
     }
 }

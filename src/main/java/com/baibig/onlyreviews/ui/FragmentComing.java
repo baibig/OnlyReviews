@@ -14,6 +14,7 @@ import com.baibig.onlyreviews.model.Movie;
 import com.baibig.onlyreviews.utils.MovieParser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -37,9 +38,9 @@ public class FragmentComing extends Fragment implements MovieParser.ListResultCa
     }
 
     @Override
-    public void onListResult(List<Movie> data) {
+    public void onListResult(List<?> data) {
         list.clear();
-        list.addAll(data);
+        list.addAll((Collection<? extends Movie>) data);
         mAdapter.notifyDataSetChanged();
     }
 }

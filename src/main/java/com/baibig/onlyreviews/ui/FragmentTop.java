@@ -1,5 +1,7 @@
 package com.baibig.onlyreviews.ui;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,6 +32,7 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,13 +50,22 @@ public class FragmentTop extends Fragment implements AdapterView.OnItemClickList
     private ArrayList<Movie> list;
     private int start=0;
     private int count=10;
+    private OnSwitchListener onSwitchListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        onSwitchListener= (OnSwitchListener) activity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Thread.setDefaultUncaughtExceptionHandler(this);
         initView(inflater);
         initRefreshLayout();
-        MovieParser.getMoviesFromJson("top",start,count,this);
+        start=0;
+
+        MovieParser.getMoviesFromJson("top", start, count, this);
         Log.i("tag", "fragmenttop");
         return mView;
     }
@@ -73,8 +85,8 @@ public class FragmentTop extends Fragment implements AdapterView.OnItemClickList
             public void onLoad() {
                 MovieParser.getMoviesFromJson("top", start, count, new ListResultCallBack() {
                     @Override
-                    public void onListResult(List<Movie> data) {
-                        list.addAll(data);
+                    public void onListResult(List<?> data) {
+                        list.addAll((Collection<? extends Movie>) data);
                         mMovieListAdapter.notifyDataSetChanged();
                     }
                 });
@@ -95,21 +107,29 @@ public class FragmentTop extends Fragment implements AdapterView.OnItemClickList
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Movie movie= (Movie) adapterView.getItemAtPosition(i);
+        Bundle bundle=new Bundle();
+        bundle.putString("subject_id",movie.getId());
+        onSwitchListener.onSwitch(bundle);
 
     }
 
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {
-        Log.i("tag","uncaughtExveption"+throwable);
+        Log.i("tag", "uncaughtExveption" + throwable);
+
 
     }
 
     @Override
-    public void onListResult(List<Movie> data) {
+    public void onListResult(List<?> data) {
 
-        list.addAll(data);
+        list.addAll((Collection<? extends Movie>) data);
         mMovieListAdapter.notifyDataSetChanged();
         start+=count;
 
+    }
+    public interface OnSwitchListener{
+        void onSwitch(Bundle b);
     }
 }

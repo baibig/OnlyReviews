@@ -34,6 +34,8 @@ public class ReviewsListAdapter extends ArrayAdapter {
             viewHolder.author= (TextView) convertView.findViewById(R.id.reviews_list_item_author_tv);
             viewHolder.time= (TextView) convertView.findViewById(R.id.reviews_list_item_time_tv);
             viewHolder.description= (TextView) convertView.findViewById(R.id.reviews_list_item_description_tv);
+            viewHolder.comment= (TextView) convertView.findViewById(R.id.reviews_list_item_comment_tv);
+
             convertView.setTag(viewHolder);
         }else{
             viewHolder= (ViewHolder) convertView.getTag();
@@ -42,6 +44,7 @@ public class ReviewsListAdapter extends ArrayAdapter {
         viewHolder.author.setText(item.getCreator());
         viewHolder.time.setText(item.getPubDate());
         viewHolder.description.setText(item.getDescription());
+        viewHolder.comment.setText(item.getComment());
         return convertView;
     }
 
@@ -50,5 +53,6 @@ public class ReviewsListAdapter extends ArrayAdapter {
         TextView author;
         TextView time;
         TextView description;
+        TextView comment;
     }
 }

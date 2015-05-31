@@ -5,6 +5,10 @@ import android.util.Log;
 import com.baibig.onlyreviews.model.ReviewsRSSFeed;
 import com.baibig.onlyreviews.model.ReviewsRSSItem;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -29,6 +33,7 @@ public class ReviewsRSSHandler extends DefaultHandler {
     int currentState=0;
     boolean isItem=false;
     private Stack<String> stack=new Stack<>();
+
     public ReviewsRSSHandler(){}
 
     @Override
@@ -74,7 +79,8 @@ public class ReviewsRSSHandler extends DefaultHandler {
             currentState=RSS_PUBDATE;
             return;
         }
-        if (localName.equals("content_encoded")){
+        if (localName.equalsIgnoreCase("encoded")){
+            stack.clear();
             currentState=RSS_CONTENT_ENCODED;
             return;
         }
@@ -91,23 +97,56 @@ public class ReviewsRSSHandler extends DefaultHandler {
         if (localName.equals("description")&&isItem){
             String sb=null;
             Log.i("des",stack.size()+"");
+            int i=stack.size();
             while (!stack.empty()){
-                if (stack.peek()!=null) {
-                    sb = stack.pop() + sb;
+                if (stack.peek()!=null&&!stack.peek().equals("\n")) {
+                    if (stack.size()==4){
+                        item.setComment(stack.pop());
+                        stack.pop();
+                        String regex="http://movie.douban.com/subject/[0-9].*";
+                        String movie=stack.pop();
+                        Pattern pattern=Pattern.compile(regex);
+                        Matcher matcher=pattern.matcher(movie);
+                        if (matcher.find()){
+                            pattern=Pattern.compile("[0-9].*");
+                            Matcher m=pattern.matcher(matcher.group());
+                            if (m.find()){
+                                item.setMovie_id(m.group());
+                            }
+
+                        }
+
+
+                    }else {
+                        sb = stack.pop() + sb;
+                    }
                 }
                 else
                     stack.pop();
             }
             currentState=0;
-            Pattern p = Pattern.compile("\n");
-            Matcher m1 = p.matcher(sb);
-            sb=m1.replaceAll("");
-            String[] s=sb.split("\n");
-            for (String m:s){
-                Log.i("characters", m);
-            }
             item.setDescription(sb);
             return;
+        }
+        if (localName.equalsIgnoreCase("encoded")&&isItem){
+            String s=null;
+            while (!stack.isEmpty()){
+                if (!stack.peek().equals("\n")){
+                    s=stack.pop()+s;
+                }else {
+                    stack.pop();
+                }
+            }
+            Document doc= Jsoup.parseBodyFragment(s);
+            Element body=doc.body();
+            Elements imgs=body.getElementsByTag("img");
+            Element img=imgs.first();
+            item.setImg(img.attr("src"));
+            Elements creators=body.getElementsByTag("a");
+            Element creator=creators.first();
+            item.setCreator_url(creator.attr("href"));
+            currentState=0;
+            item.setContent_encoded(s);
         }
     }
 
@@ -138,8 +177,8 @@ public class ReviewsRSSHandler extends DefaultHandler {
                     currentState = 0;
                     break;
                 case RSS_CONTENT_ENCODED:
-                    item.setContent_encoded(s);
-                    currentState = 0;
+                    stack.push(s);
+                    Log.i("encoded",s);
                     break;
                 default:
                     break;

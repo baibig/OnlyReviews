@@ -8,5 +8,8 @@ public class Constant {
     public final static String HOTREVIEWS="http://movie.douban.com/feed/review/movie";
     public final static String NEWREVIEWS="http://movie.douban.com/feed/review/movie_new";
     public final static String MOVIEPLAYING="http://movie.douban.com/nowplaying/wuhan/";
+    public final static String PREREVIEWS="http://movie.douban.com/feed/subject/";
+    public final static String POSTREVIEWS="/reviews";
+    public final static String REVIEWPREURL="http://movie.douban.com/review/";
 
 }
