@@ -6,4 +6,7 @@
 - 用Volley框架进行网络通信，包括以post方式请求json数据以及采用[NetworkImageView和ImageLoader](http://www.androidhive.info/2014/07/android-custom-listview-with-image-and-text-using-volley/)下载网络图片。
 - v4包中的SwipRefreshLayout不具有上拉加载更多的功能，根据SwipRefreshLayout自定义了一个可以上拉加载更多的layout，不过还很简陋。
 - 使用[PagerSlidingTabStrip](https://github.com/astuetz/PagerSlidingTabStrip)和ViewPager实现了Indicator指示器的功能，不再需要使用特别麻烦的Actionbar.Tab，并且可以在Fragment内嵌Fragment，使用起来很方便。
-- 使用Jsoup实现爬取正在热映和即将上映的电影的功能。<div align="right">5月27</div>
+- 使用Jsoup实现爬取正在热映和即将上映的电影的功能。
+<div align="right">5月27</div>
+- 实现点击电影跳转到电影评论列表页面和浏览评论功能。
+<div align="right">5月31</div>
